@@ -14,6 +14,9 @@ DEFAULT_IMAGE_URL = (
     '&fill=transparent'
 )
 
+def get_image_url(image_field):
+    if image_field:
+        return image_field.url
 
 def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
     icon = folium.features.CustomIcon(
@@ -36,17 +39,14 @@ def show_all_pokemons(request):
             folium_map, 
             pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+            request.build_absolute_uri(get_image_url(pokemon_entity.pokemon.image))
         )
     pokemons = Pokemon.objects.all()
     pokemons_on_page = []
     for pokemon in pokemons:
-        img_url = None
-        if pokemon.image:
-            img_url = request.build_absolute_uri(pokemon.image.url)
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': img_url,
+            'img_url': request.build_absolute_uri(get_image_url(pokemon.image)),
             'title_ru': pokemon.title,
         })
 
@@ -69,16 +69,19 @@ def show_pokemon(request, pokemon_id):
 
     requested_pokemon = PokemonEntity.objects.filter(pokemon__id=pokemon_id).exclude(appeared_at=None).exclude(disappeared_at=None).filter(appeared_at__lte=localtime()).filter(disappeared_at__gte=localtime())
     pokemon = Pokemon.objects.get(id=pokemon_id)
-    pokemon_discription = {}
-    pokemon_discription['title_ru'] = pokemon.title
-    pokemon_discription['img_url'] = request.build_absolute_uri(pokemon.image.url)
+    pokemon_discription = {
+        'title_ru' : pokemon.title,
+        'img_url' : request.build_absolute_uri(get_image_url(pokemon.image))
+    }
+    # pokemon_discription['title_ru'] = pokemon.title
+    # pokemon_discription['img_url'] = request.build_absolute_uri(pokemon.image.url)
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in requested_pokemon:
         add_pokemon(
             folium_map, 
             pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+            request.build_absolute_uri(get_image_url(pokemon_entity.pokemon.image))
         )
 
     return render(request, 'pokemon.html', context={
