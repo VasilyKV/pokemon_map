@@ -3,10 +3,10 @@ from django.db import models  # noqa F401
 
 class Pokemon(models.Model):
     title_ru = models.CharField('имя покемона на русском', max_length=200)
-    title_en = models.CharField('имя покемона на английском', max_length=200, blank=True, null=True)
-    title_jp = models.CharField('имя покемона на японском', max_length=200, blank=True, null=True)
-    image = models.ImageField('изображение покемона', upload_to='image', null=True)
-    description = models.TextField('описание покемона', blank=True, null=True)
+    title_en = models.CharField('имя покемона на английском', max_length=200, blank=True)
+    title_jp = models.CharField('имя покемона на японском', max_length=200, blank=True)
+    image = models.ImageField('изображение покемона', upload_to='image',blank=True, null=True)
+    description = models.TextField('описание покемона', blank=True)
     previous_evolution = models.ForeignKey('self', verbose_name='предок', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
