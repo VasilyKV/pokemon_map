@@ -49,7 +49,7 @@ def show_all_pokemons(request):
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': request.build_absolute_uri(get_image_url(pokemon.image)),
-            'title_ru': pokemon.title,
+            'title_ru': pokemon.title_ru,
         })
 
     return render(request, 'mainpage.html', context={
@@ -62,9 +62,11 @@ def show_pokemon(request, pokemon_id):
     requested_pokemon = PokemonEntity.objects.filter(pokemon__id=pokemon_id).exclude(appeared_at=None).exclude(disappeared_at=None).filter(appeared_at__lte=localtime()).filter(disappeared_at__gte=localtime())
     pokemon = Pokemon.objects.get(id=pokemon_id)
     pokemon_description = {
-        'title_ru' : pokemon.title,
+        'title_ru' : pokemon.title_ru,
         'img_url' : request.build_absolute_uri(get_image_url(pokemon.image)),
-        'description' : pokemon.description
+        'description' : pokemon.description,
+        'title_en' : pokemon.title_en,
+        'title_jp' : pokemon.title_jp
     }
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
