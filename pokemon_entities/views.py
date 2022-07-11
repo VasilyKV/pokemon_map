@@ -102,7 +102,7 @@ def show_pokemon(request, pokemon_id):
             'pokemon_id': pokemon.previous_evolution.id,
             'img_url': request.build_absolute_uri(get_image_url(pokemon.previous_evolution.image))
         }
-    next_evolutions = pokemon.pokemon_set.all()
+    next_evolutions = pokemon.next_evolution.all()
     if next_evolutions:
         next_evolution = next_evolutions.first()
         pokemon_description['next_evolution'] = {
