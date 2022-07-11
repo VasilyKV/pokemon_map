@@ -34,7 +34,7 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 def show_all_pokemons(request):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    pokemons_entity = PokemonEntity.objects.exclude(
+    pokemons_entities_in_present = PokemonEntity.objects.exclude(
         appeared_at=None
     ).exclude(
         disappeared_at=None
@@ -43,7 +43,7 @@ def show_all_pokemons(request):
     ).filter(
         disappeared_at__gte=localtime()
     )
-    for pokemon_entity in pokemons_entity:
+    for pokemon_entity in pokemons_entities_in_present:
         add_pokemon(
             folium_map,
             pokemon_entity.lat,
@@ -68,7 +68,7 @@ def show_all_pokemons(request):
 
 def show_pokemon(request, pokemon_id):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    requested_pokemon = PokemonEntity.objects.filter(
+    pokemon_entities_in_present = PokemonEntity.objects.filter(
         pokemon__id=pokemon_id
     ).exclude(
         appeared_at=None
@@ -79,7 +79,7 @@ def show_pokemon(request, pokemon_id):
     ).filter(
         disappeared_at__gte=localtime()
     )
-    for pokemon_entity in requested_pokemon:
+    for pokemon_entity in pokemon_entities_in_present:
         add_pokemon(
             folium_map,
             pokemon_entity.lat,
